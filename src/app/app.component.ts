@@ -1,10 +1,39 @@
-import { Component } from '@angular/core';
+import { Component, Directive, Input, Optional } from '@angular/core';
+
+@Directive({
+  selector: '[appParent]'
+})
+export class ParentDirective {
+  @Input()
+  public appParent: string;
+}
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  template: `
+    <div appParent="directive value">
+      There is a value:
+      <app-new></app-new>
+
+      <ng-container *ngTemplateOutlet="component"></ng-container>
+    </div>
+
+    <ng-template #component>
+      There is no value because of template outlet:
+      <app-new></app-new>
+    </ng-template>
+  `,
 })
 export class AppComponent {
-  title = 'template-injector-dmeo';
+}
+
+@Component({
+  selector: 'app-new',
+  template: `
+    <p>{{parentDirective ? parentDirective.appParent : 'no value'}}</p>
+  `,
+})
+export class NewComponent {
+  constructor(@Optional() public parentDirective: ParentDirective) {
+  }
 }
